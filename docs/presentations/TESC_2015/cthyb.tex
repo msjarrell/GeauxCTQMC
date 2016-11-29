@@ -1,0 +1,28 @@
+\frame { \frametitle{Hybridization Expansion (I)}
+In CT-HYB, we separate bath and impurity operators and obtain
+\begin{align}
+H_b&=H_\text{hyb} = \underbrace{\sum_{pj} (V_p^j c_{p}^\dagger d_j}_{\tilde{H}_\text{hyb}}  
++ \underbrace{\sum_{pj} V_p^{j*}d_j^\dagger c_{p})}_{\tilde{H}_\text{hyb}^\dagger} \\
+Z &=\sum_{k=0}^\infty\int_0^\beta d\tau_1 \ldots \int_{\tau_{k-1}}^\beta d\tau_k \int_0^\beta d\tau_1' \ldots  \int_{\tau_{k-1}'}^\beta d\tau_k' \nonumber\\
+&\sum_{\substack{j_1, \cdots j_k\\j_1', \cdots j_k'}}\sum_{\substack{p_1, \cdots p_k\\p_1',\cdots p_k'}} V^{j_1}_{p_1}V^{j_1'*}_{p_1'} \cdots V^{j_k}_{p_k}V^{j_k'*}_{p_k'}  \nonumber\\
+&\times\Tr_d\left[T_\tau e^{-\beta H_\text{loc}} d_{j_k}(\tau_k) d_{j_k'}^\dagger(\tau_k')\cdots d_{j_1}(\tau_1)d_{j_1'}^\dagger(\tau_1')\right] \nonumber \\
+&\times\Tr_c\left[T_\tau e^{-\beta H_\text{bath}} c^\dagger_{p_k}(\tau_k)c_{p_{k'}}(\tau_k')\cdots c_{p_1}^\dagger(\tau_1) c_{p_1'}(\tau_1')\right]
+\end{align}
+}
+
+\frame { \frametitle{Hybridization Expansion (II)}
+The bath partition function could be integrated out
+\begin{align}
+Z_\text{bath} = \Tr e^{-\beta H_\text{bath}} = \prod_\sigma \prod_{p} (1+e^{-\beta \varepsilon_{p}}),
+\end{align}
+With the anti-periodic hybridization function $\mathbf{\Delta}$,
+\begin{align}
+\Delta_{lm}(\tau) = \sum_p \frac{V^{l*}_p V^m_p}{e^{\varepsilon_p\beta}+1} \times \left\{ \begin{array}{ll}-e^{-\varepsilon_p(\tau-\beta)},& 0<\tau<\beta \\ e^{-\varepsilon_p\tau},&  -\beta<\tau<0\end{array}\right.,
+\end{align}
+and by separating the contributions from each spin, we obtain
+\begin{eqnarray}
+\label{partition_function}
+Z &=&  Z_\text{bath}\prod_j \sum_{k_j=0}^\infty \int_0^\beta d\tau^j_1 \ldots \int_{{\tau'}^j_{k_j-1}}^\beta d{\tau'}^j_{k_j} \\
+&\times& \Tr_d\Big[T_\tau e^{-\beta H_\text{loc}} d_j(\tau^j_{k_j}) d_j^\dagger(\tau'^j_{k_j})\ldots d_j(\tau^j_{1})d_j^\dagger(\tau'^j_1)\Big] \det \mathbf{\Delta}_j.\nonumber
+\end{eqnarray}
+}

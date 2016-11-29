@@ -1,0 +1,9 @@
+#!/bin/bash
+#PBS -q mwfa
+#PBS -A hpc_mwfa
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=72:00:00
+#PBS -N ctqmc_1000
+
+cd ~/CTQMC
+./ctqmc_main > ../ctqmc_test_1000.txt

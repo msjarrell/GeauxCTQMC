@@ -1,0 +1,10 @@
+int get_sz();
+int main_CTQMC (int job_id,double t0,int proc_id);
+int main_serial ( Par parameters);
+int main_parallel ( Par parameters);
+int init_CTQMC(Par *par,int job_id,double t0,int proc_id);
+void main_init(Mempool *mempool, Par parameters);
+void main_loop (Mempool *mempool, Par parameters);
+void mem_alloc (Mempool *mem);
+void mem_free (Mempool *mem);
+void main();

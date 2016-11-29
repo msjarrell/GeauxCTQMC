@@ -1,0 +1,133 @@
+Description
+===============
+Purpose
+---------
+A Continuous Time Quantum Monte Carlo Impurity Solver, using 
+the hybridization expansion algorithm.
+
+Specifications and limits
+---------
+This code works on both CPU and Xeon Phi co-processors,
+using symmetric execution mode.
+
+
+Extent of testing.
+----------
+This code is tested with the following setups: 
+Intel Core i7-2600 CPU
+Intel Xeon Phi 7120P co-processor
+Intel icc (ICC) 14.0.2 20140120
+
+
+The data generated from the code is tested against published results in 
+literature.
+
+Documentation of Features
+=========================
+Compiling options
+-----------
+In the Makefile, enabling the following compiling flags for different options.
+-DUSE_MATRIX: Use explicit matrix multiplication for the evaluation of trace. 
+	      Do not enable if you wish to use the segment picture. 
+	      Enabled by default.
+-DDMFT_LOOP:  Read the hybridization function from file "GS.txt", instead of 
+	      generating it at the beginning of simulation. Enabled by default.
+-DUSE_PCG:    Use the PCG random number generator instead of rand_r(). 
+	      Enabled by default.
+-DMEASURE_SCPT:	  Measure the spin/charge susceptibilities.
+-DMEASURE_GIO:	  Measure the green function in imaginary frequency.
+-DMEASURE_LEG:	  Use the Legendre polynomials to measure the green function.
+		  Enabled by default.
+
+
+Input file formats
+-----------
+"parameters.txt":
+beta	mu	U	V^2(*)	D(*)	IterPerMeasure	IterPerCheck IterTotal IterWarmup	Threads	Seed
+beta: Inverse temperature of the simulation.
+mu:   Chemical potential.
+U:    Hubbard Interaction.
+V^2:  Hybridization.
+D:    Bandwidth.
+IterPerMeasure:	Number of iterations between two measurements.
+IterPerCheck:	Number of iterations between checking the error of inverse matrix twice.
+IterTotal:	Total number of measurements.
+IterWarmup:	Total number of warmup loops.
+Threads:	Total number of Markov chains/OpenMP threads.
+Seed:		RNG seed. Use system time if set to -1.
+
+(*): These numbers are not used if -DUSE_MATRIX is enabled in Makefile.
+
+If -DUSE_MATRIX is enabled in Makefile, then the Hamiltonian must be specified 
+via "hamiltonian_aim.txt". Each element of the matrix is listed in a plain format.
+
+Some additional parameters can be changed in "parameters.h". 
+HM_SZ: 		Linear size of Hamiltonian matrix.
+N_LEG:		Number of Legendre coefficients when using Legendre polynomials 
+		for measurement.
+N_OMEGA:	Number of imaginary frequencies when measuring green function 
+		in imaginary frequencies.
+N_TAU:		Number of points in the imaginary time grid.
+N_ORBIT:	Number of orbits.
+ARRAY_SZ:	Max number of segments allowed in each channel.
+
+
+
+Output format.
+------------
+Text output file in Job_output_0:
+green_tau_?.txt: Green function in imaginary time for each channel.
+		 The first column is the sum of Monte Carlo measurements. 
+		 The green function is the sum/ (beta * beta /N_TAU * iters),
+		 where iters = IterPerCheck * IterTotal * Threads.
+output.txt:	 Some statistics from the Monte Carlo simulation.
+green_imega_?.txt:    Green function in imaginary frequency for each channel.
+green_leg?_?.txt:     Green function in Legendre coefficients, for each channel/thread.
+
+
+Packaged input data
+===================
+Scientific significance
+------------
+Refer to papers.
+P. Werner, A. Comanac, L. de’ Medici, M. Troyer, and A. J. Millis, Phys. Rev. Lett. 97, 076405 (2006).
+
+
+Setup and Go
+========================
+Prerequisites
+-----------
+The code is tested with the following configuration:
+A x86-64 CPU
+Linux 2.6.32 x86-64
+Intel icc with MKL
+
+
+Step-by-Step
+------------
+1. Download the package from ...
+2. Extract the package into PATH
+3. $ cd PATH/src
+4. $ make ctqmc_dmft
+5. Setup "parameters.txt", "hamiltonian_aim.txt" and "GS.txt". Sample files can be found in "data/".
+6. $ ./ctqmc_g
+7. See results in the output directory "Job_output_0" and verify. 
+8. A sample result of green function on imaginary time can be found in "data/gtau.png".
+
+
+Development History
+====================
+Discussion of origin of code
+------------
+Written from scratch.
+
+
+Changes in each release.
+------------
+First release.
+
+
+Reference:
+====================
+Philipp Werner, Armin Comanac, Luca de’ Medici, Matthias Troyer, and Andrew J. Millis
+Phys. Rev. Lett. 97, 076405 – Published 18 August 2006

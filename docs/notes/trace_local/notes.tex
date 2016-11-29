@@ -1,0 +1,101 @@
+\documentclass{article}
+
+\begin{document}
+\section{Exact diagonalization}
+We need to evaluate the trace of this term:
+\begin{equation}
+  \label{eq:1}
+  e^{-H*(\beta-t_n)}F_{t_n}e^{-H*(t_n-t_{n-1})}F_{t_{n-1}}\ldots F_{t_0}e^{-Ht_0}  
+\end{equation}
+
+We diagonalize the Hamiltonian with
+\[
+H=UVU^T
+\]
+where $V$ is diagonal matrix with eigenvalues of $H$, each column of $U$ is a
+eigenvector of $H$.
+Using
+\[
+UU^T=I
+\]
+we have 
+\[
+e^{-Ht}=e^{-UVU^Tt}=Ue^{-Vt}U^T
+\]
+ the term becomes
+\[
+Ue^{-V*(\beta-t_n)}U^TF_{t_n}Ue^{-V*(t_n-t_{n-1})}\ldots F_{t_0}Ue^{-Vt_0}U^T
+\]
+define 
+\[
+D_t=U^TF_tU
+\]
+The term is then
+\begin{equation}
+  \label{eq:2}
+  Ue^{-V*(\beta-t_n)}D_{t_n}e^{-V*(t_n-t_{n-1})}\ldots D_{t_0}e^{-Vt_0}U^T  
+\end{equation}
+
+We can then evaluate the full trace of the matrix above.
+
+\section{Krylov method}
+The complexity of the above method is $O(m^3n)$, where $m$ is the size of the 
+matrix, and $n$ is the number of fermion operators in the series. Since $m$ 
+scales exponentially with the number of orbitals, this can be 
+very expensive even for a moderate number of orbitals (say 5). Instead, we can 
+use the Krylov method to find the trace.
+
+First, we find the few lowest eigenstates of the Hamiltonian $|i\rangle$, since 
+they are usually more relevant at low temperatures. Then the trace is 
+approximately
+\[
+\sum_i\langle i|  e^{-H*(\beta-t_n)}F_{t_n}e^{-H*(t_n-t_{n-1})}F_{t_{n-1}}
+\ldots F_{t_0}e^{-Ht_0}  |i\rangle
+\]
+
+Then each of the term in the summation become of a series of the following 
+operations:
+\begin{itemize}
+\item $e^{-Ht}|v\rangle$
+\item $F|v\rangle$
+\end{itemize}
+
+The second operation is $O(m^2)$, so we'll ignore it for now. For the first term,
+we can generate a Krylov space using the following method: 
+\footnote{ANALYSIS OF SOME KRYLOV SUBSPACE APPROXIMATIONS TO THE MATRIX 
+EXPONENTIAL OPERATOR, Y. SAAD , section 2.1}
+\begin{enumerate}
+\item $v_1=v/||v||$,
+\item Iteration: do $j=1,2,\ldots,k$ 
+  \begin{enumerate}
+  \item $w=Hv_j$
+  \item Iteration: do $i=1,2...,j$
+    \begin{enumerate}
+    \item $h_{i,j}=w\cdot v_i$
+    \item $w=w-h_{i,j}v_i$
+    \end{enumerate}
+  \item  $h_{j+1,j}=||w||$, $v_{j+1}=w/h_{j+1,j}$
+  \end{enumerate}
+
+\end{enumerate}
+
+With these iteration, we generate a orthonormal basis 
+$V_k=[v_1,v_2,\ldots, v_k]$
+and a $k\times k$ matrix $H_k$, where $H_k(i,j)=h_{i,j}$.
+
+The exponential term can be just evaluated by:
+\[
+e^{-Ht}v \approx ||v|| V_m e^{-H_k t}e_1
+\]
+where $e_1 = [1, 0, 0, \ldots 0]^T$ . 
+
+The complexity of this operation is $O(k^3+mk^2+m^2k)$. Usually a small value ($\sim 3$)
+of $k$ is needed, thus the complexity of the computation is reduced. 
+Overall the complexity scales as $O(m^2kn)$.
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,71 @@
+\documentclass{article}
+\title{Notes on doing the measurements in CTHYB}
+\begin{document}
+\section{$G(\tau)$}
+See akiss notes 2.4.
+
+\[
+G(\tau)=-\left\langle\frac{1}{\beta}\sum_{ij}^k
+\left(\Delta^{(k)}\right)^{-1}_{ji}\delta(\tau,\tau_i'-\tau_j)\right\rangle_{MC}
+=-\left\langle\frac{1}{\beta}\sum_{ij}^k
+M^{(k)}_{ji}\delta(\tau,\tau_i'-\tau_j)\right\rangle_{MC}
+\]
+To reduce noise and save memory, split $\beta$ in to fine grids \verb|N_TAU| and bin data. 
+Note that for small number of \verb|N_TAU|,
+the Fourier transform back to Matsubara frequency may be inaccurate. 
+
+\section{$G(i\omega)$}
+Fourier transform each contribution to Green's function:
+\[
+G(i\omega)=-\langle\frac{1}{\beta}\sum_{i,j}\exp^{i\omega(\tau_j'-\tau_j)}M_{ji}\rangle_{MC}
+\]
+
+When compiling, define \verb|-DMEASURE_GIO| to enable this measurement.
+
+Noisy at high frequencies. 
+\section{Using Legendre Polynomials}
+To reduce high frequency noise, one can use a set of Legendre polynomials as basis and measure the coefficients. See arxiv:1104.32115.
+\[
+G_l=\sqrt{2l+1}\int_0^\beta d\tau P_l(x(\tau))G(\tau)
+\]
+
+In CTHYB:
+\[
+G_l=-\frac{\sqrt{2l+1}}{\beta}\left\langle\sum_{ij}M_{ji}\tilde{P}_l(\tau_i'-\tau_j)\right\rangle_{MC}
+\]
+Where
+\[
+\tilde{P}(\tau)=\left\{
+\begin{array}{ll}
+  P_l(x(\tau))& \tau >0\\
+  -P_l(x(\tau+\beta))&\tau<0
+\end{array}
+\right.
+\]
+and \[
+x(\tau)=2\tau/\beta-1
+\]
+
+To restore $G(\tau)$ or $G(i\omega)$ from the measured set of coefficients,
+\[
+G(\tau) = \sum_{l\ge 0}\frac{\sqrt{2l+1}}{\beta}P_l(x(\tau))G_l
+\]
+and
+\[
+G(i\omega) = \sum_{l\ge 0} G_l\frac{\sqrt{2l+1}}{\beta}\int_0^\beta\exp^{i\omega_n\tau}P_l(x(\tau))=\sum_{l\ge 0}T_{nl}G_l
+\]
+Where
+\[
+T_{nl}=(-1)^ni^{l+1}\sqrt{2l+1}j_l\left(\frac{(2n+1)\pi}{2}\right)
+\]
+and $j_l(z)$ are spherical Bessel functions. Note that in the procedure, no model-guided Fourier transform is used.
+
+By setting an appropriate cut-off at number of Legendre series, high frequency noise is filtered. TRIQS used 80. 
+
+When compiling the code, use \verb|-DMEASURE_LEG| to enable this measurement.
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

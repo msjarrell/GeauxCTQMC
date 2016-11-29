@@ -1,0 +1,60 @@
+% \frame { \frametitle{Hirsch-Fye Quantum Monte Carlo Method}
+% The Hirsch-Fye QMC (HF-QMC) was the  method of choice used to construct QIP 
+% solvers before the Continuous-time QMC (CT-QMC).
+% 
+% HF-QMC writes the imaginary-time functional integral by discretizing
+% the interval into $M$ equally spaced “time-slices” and then on each time-slice 
+% applies a discrete Hubbard-Stratonovich transformation, as shown with the single 
+% orbital Anderson impurity model,
+% 
+% \begin{align}
+% e^{-\Delta \tau U\left(n_\uparrow 
+% n_\downarrow-\frac{n_\uparrow+n_\downarrow}{2}\right)}&=\frac{1}{2}\sum_{
+% s_i=\pm 
+% 1}e^{\lambda s_i\left(n_\uparrow-n_\downarrow\right)},\\
+% \lambda&=\text{arcosh}\left[\exp\left(\frac{1}{2}\Delta\tau U\right)\right].
+% \end{align}
+% }
+% 
+% \frame { \frametitle{CT-QMC vs HF-QMC}
+% CT-QMC has several advantages over HF-QMC,
+% 
+% \begin{itemize}
+% \item HF-QMC requires an equally spaced time discretization which may 
+%       cause troubles in time step extrapolation while CT-QMC doesn't have such 
+% issues by design.
+% \item At large interactions and low temperatures, equilibration may become an 
+% issue for HF-QMC while it could be handled in CT-QMC.
+% \item For system beyong single orbital, it is prohibitively difficult to handle 
+% with HF-QMC 
+%       while CT-QMC could be generalized to handle multiple orbital cases.
+% \end{itemize}
+% }
+
+\frame { \frametitle{Basic Idea of CT-QMC}
+In CT-QMC, the Hamiltonian $H=H_a+H_b$ is split into two parts.
+The partition function $Z=\Tr[e^{-\beta H}]$ is written in the interaction representation 
+with respect to $H_a$ and expands in powers of $H_b$,
+\begin{align}
+Z=&\Tr\ {T_\tau} e^{-\beta H_a} \text{exp} \left[-\int_0^\beta d\tau H_b(\tau)\right] \nonumber \\
+=&\sum_k (-1)^k\int_0^\beta d\tau_1\ldots\int_{\tau_{k-1}}^\beta d\tau_k \nonumber \\
+&\times \text{Tr}\big[e^{-\beta H_a}H_b(\tau_k)H_b(\tau_{k-1})\ldots H_b(\tau_1)\big]
+\end{align}
+The impurity Green's function ($0 < \tau < \beta$) or the ``solution'' of the impurity model is then given by
+\begin{equation}
+ G(\tau) = \frac{1}{Z}\Tr[e^{-(\beta-\tau) H} d e^{-\tau H} d^\dagger]
+\end{equation}
+}
+
+\frame { \frametitle{CT-QMC Expansion Algorithms}
+There are several expansion algorithms with different choices of $H_b$. The most
+widely used ones are:
+\begin{itemize}
+  \item CT-INT (Interaction expansion, $H_b=H^I_\text{loc}$): works well for clusters, single orbital models, 
+  has sign problem with repulsive interactions, is not good for general electric structure Hamiltonians.
+  \item CT-HYB (Hybridization expansion, $H_b=H_\text{hyb}$): works well for multi-orbital systems, 
+  handles low temperature and strong interactions more efficiently, is not good for clusters.
+\end{itemize}
+Some other expansion algorithms that either consider an additional auxiliary field decomposition (for clusters) 
+or exchange coupling (for Kondo problems) have been developed as well.
+}
